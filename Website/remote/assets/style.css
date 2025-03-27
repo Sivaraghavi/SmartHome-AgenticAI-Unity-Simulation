@@ -1,0 +1,140 @@
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #f0f2f5;
+    --text-color: #333;
+  }
+  
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+  }
+  
+  h1, h2, h3 {
+    margin-bottom: 10px;
+  }
+  
+  button {
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: none;
+    background-color: var(--primary-color);
+    color: white;
+    cursor: pointer;
+  }
+  
+  button.off {
+    background-color: #6c757d;
+  }
+  
+  input[type="range"], input[type="number"], select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+  
+  .colorpicker {
+    width: 100%;
+    height: 40px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .device-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .device-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .device-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+  }
+  
+  .control-group {
+    margin-bottom: 15px;
+  }
+  
+  .control-label {
+    display: block;
+    margin-bottom: 5px;
+    color: #666;
+  }
+  
+  .header {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+  
+  .connection-status {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 14px;
+    margin-left: 10px;
+  }
+  
+  .connected {
+    background-color: #e7f5e7;
+    color: #2d862d;
+  }
+  
+  .disconnected {
+    background-color: #ffe6e6;
+    color: #cc0000;
+  }
+  
+  .chat-input-area {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .chat-input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .chat-button, .voice-button {
+    padding: 10px 15px;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 16px;
+  }
+  
+  .chat-button:not(.off):hover, .voice-button:not(.off):hover {
+    background-color: #0056b3;
+  }

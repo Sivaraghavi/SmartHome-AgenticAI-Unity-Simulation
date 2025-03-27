@@ -1,0 +1,76 @@
+# src/home_automation/config/tasks.yaml
+home_analyst_task:
+  description: >
+    thoroughly understand the context {topic} by the user
+    understanding and summerizing the context
+    summerizing the context to conclusion
+    provide direct output without any useless text in it
+    understand and provide to the point solution
+    provide solution for the problem in short
+    
+  expected_output: >
+    a simple text that is solution to the problem {topic}
+    example_input: the bedroom temperature is very hot
+    output: turn on the fan in bedroom
+  agent: home_analyst
+
+location_detector_task:
+  description: >
+    you have enough knowledge to understand the available rooms
+    you can check the room fron the knowledge document
+    thoroughly understand the context input by the user
+    understanding and summerizing the context
+    summerizing the context to conclusion
+    provide direct output without any useless text in it
+    understand and provide to the point solution
+    provide solution for the problem in short
+    
+    
+  expected_output: >
+    an array of room name according to the context
+    understand the the input and see what room need the changes
+    use the room list to check the available rooms for changes
+    according to input see which room needs the changes
+    if the room in not present in the room list then choose the most closest possible room in the list
+    example:
+      input: turn on fan in hall and bedroom
+      output: ["hall","bedroom"]
+    the output is just array and nothing else, no other character
+  agent: location_detector
+
+# device_action_task:
+#   description: >
+#     understanding the devices in the room
+#     checking the devices available in the room
+#     checking the status of the devices in the room
+#     according to the {topic} try to derive the action
+#     carefully check the current situation of the room
+#     understand the json of the devices in the room
+#     call the devices to change their status using json
+  
+#   expected_output: >
+#     an json format output
+#     use the json to call the API
+#     example: you want to turn on the light brightness low
+#     current status:"
+#     {
+#               "room":"Living Room
+#               "device_id": "LR-001",
+#               "type": "Smart Light",
+#               "state": "ON",
+#               "parameters": {
+#                 "brightness": "80%",
+#                 "color": "Warm White",
+#                 "power_usage": "10W"
+#               }
+#             }"
+#     output:
+#         "{
+#         "room":"Living Room",
+#         "device":"Smart Light",
+#         "device_id":"LR_001",
+#         "parameters":{
+#         "bightness":"50%"
+#         }
+#         }"
+#   agent: device_action

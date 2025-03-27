@@ -1,0 +1,6 @@
+the rooms available are:
+
+kitchen,
+living_room,
+bed_room,
+bathroom

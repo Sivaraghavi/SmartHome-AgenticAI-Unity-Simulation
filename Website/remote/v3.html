@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IoT Device Controller</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      background-color: #f0f2f5;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    /* Chat input area styles */
+    .chat-input-area {
+      background-color: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chat-input {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .chat-button,
+    .voice-button {
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-size: 16px;
+    }
+    .chat-button:hover,
+    .voice-button:hover {
+      background-color: #0056b3;
+    }
+    .header {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    .connection-status {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 14px;
+      margin-left: 10px;
+    }
+    .connected {
+      background-color: #e7f5e7;
+      color: #2d862d;
+    }
+    .disconnected {
+      background-color: #ffe6e6;
+      color: #cc0000;
+    }
+    .device-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .device-card {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .device-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .control-group {
+      margin-bottom: 15px;
+    }
+    .control-label {
+      display: block;
+      margin-bottom: 5px;
+      color: #666;
+    }
+    .button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .button:hover {
+      background-color: #0056b3;
+    }
+    .button.off {
+      background-color: #6c757d;
+    }
+    input[type="range"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    .color-picker {
+      width: 100%;
+      height: 40px;
+      padding: 5px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>
+        IoT Device Controller
+        <span id="connectionStatus" class="connection-status disconnected">Disconnected</span>
+      </h1>
+    </div>
+
+    <!-- Chat / Input Area -->
+    <div class="chat-input-area">
+      <input type="text" id="chatText" class="chat-input" placeholder="Type your command here..." />
+      <button id="sendText" class="chat-button">Send</button>
+      <button id="startVoice" class="voice-button">🎤</button>
+    </div>
+
+    <div class="device-grid">
+      <!-- Lights Controls (Assuming 3 lights) -->
+      <div class="device-card">
+        <div class="device-title">Light 1 Control</div>
+        <div class="control-group">
+          <label class="control-label">Toggle</label>
+          <button id="light0Toggle" class="button off">OFF</button>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Intensity</label>
+          <input type="range" id="light0Intensity" min="0" max="2" step="0.1" value="1" />
+        </div>
+        <div class="control-group">
+          <label class="control-label">Color</label>
+          <input type="color" id="light0Color" class="color-picker" value="#ffffff" />
+        </div>
+      </div>
+      <div class="device-card">
+        <div class="device-title">Light 2 Control</div>
+        <div class="control-group">
+          <label class="control-label">Toggle</label>
+          <button id="light1Toggle" class="button off">OFF</button>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Intensity</label>
+          <input type="range" id="light1Intensity" min="0" max="2" step="0.1" value="1" />
+        </div>
+        <div class="control-group">
+          <label class="control-label">Color</label>
+          <input type="color" id="light1Color" class="color-picker" value="#ffffff" />
+        </div>
+      </div>
+      <div class="device-card">
+        <div class="device-title">Light 3 Control</div>
+        <div class="control-group">
+          <label class="control-label">Toggle</label>
+          <button id="light2Toggle" class="button off">OFF</button>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Intensity</label>
+          <input type="range" id="light2Intensity" min="0" max="2" step="0.1" value="1" />
+        </div>
+        <div class="control-group">
+          <label class="control-label">Color</label>
+          <input type="color" id="light2Color" class="color-picker" value="#ffffff" />
+        </div>
+      </div>
+
+      <!-- TV Control -->
+      <div class="device-card">
+        <div class="device-title">TV Control</div>
+        <div class="control-group">
+          <label class="control-label">Toggle</label>
+          <button id="tvToggle" class="button off">OFF</button>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Volume</label>
+          <input type="range" id="tvVolume" min="0" max="100" value="10" />
+        </div>
+        <div class="control-group">
+          <label class="control-label">Channel</label>
+          <input type="number" id="tvChannel" min="1" value="1" />
+        </div>
+        <div class="control-group">
+          <label class="control-label">Source</label>
+          <select id="tvSource">
+            <option value="HDMI1">HDMI 1</option>
+            <option value="HDMI2">HDMI 2</option>
+            <option value="TV">TV</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- AC Control -->
+      <div class="device-card">
+        <div class="device-title">AC Control</div>
+        <div class="control-group">
+          <label class="control-label">Toggle</label>
+          <button id="acToggle" class="button off">OFF</button>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Temperature (°C)</label>
+          <input type="number" id="acTemperature" min="16" max="30" value="24" />
+        </div>
+        <div class="control-group">
+          <label class="control-label">Fan Speed</label>
+          <select id="acFanSpeed">
+            <option value="0">Low</option>
+            <option value="1">Medium</option>
+            <option value="2">High</option>
+            <option value="3">Auto</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Eco Mode</label>
+          <button id="acEcoMode" class="button off">OFF</button>
+        </div>
+      </div>
+
+      <!-- Fan Control -->
+      <div class="device-card">
+        <div class="device-title">Fan Control</div>
+        <div class="control-group">
+          <label class="control-label">Toggle</label>
+          <button id="fanToggle" class="button off">OFF</button>
+        </div>
+        <div class="control-group">
+          <label class="control-label">RPM</label>
+          <input type="number" id="fanRPM" min="100" max="2000" step="100" value="400" />
+        </div>
+      </div>
+
+      <!-- Fridge Control -->
+      <div class="device-card">
+        <div class="device-title">Fridge Control</div>
+        <div class="control-group">
+          <label class="control-label">Toggle</label>
+          <button id="fridgeToggle" class="button off">OFF</button>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Main Temperature (°C)</label>
+          <input type="number" id="fridgeTemperature" min="-10" max="10" value="4" />
+        </div>
+        <div class="control-group">
+          <label class="control-label">Freezer Temperature (°C)</label>
+          <input type="number" id="freezeTemperature" min="-30" max="-10" value="-18" />
+        </div>
+        <div class="control-group">
+          <label class="control-label">Main Door</label>
+          <button id="fridgeDoorToggle" class="button off">Closed</button>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Freezer Door</label>
+          <button id="freezeDoorToggle" class="button off">Closed</button>
+        </div>
+      </div>
+
+      <!-- Induction Control -->
+      <div class="device-card">
+        <div class="device-title">Induction Control</div>
+        <div class="control-group">
+          <label class="control-label">Heat Level</label>
+          <input type="range" id="inductionHeat" min="0" max="3" step="1" value="0" />
+        </div>
+      </div>
+
+      <!-- Washing Machine Control -->
+      <div class="device-card">
+        <div class="device-title">Washing Machine Control</div>
+        <div class="control-group">
+          <label class="control-label">Toggle</label>
+          <button id="washingMachineToggle" class="button off">OFF</button>
+        </div>
+      </div>
+    </div> <!-- end device-grid -->
+  </div> <!-- end container -->
+
+  <script>
+    // WebSocket initialization and command sending
+    let ws;
+    const serverUrl = 'ws://localhost:8080/iot';
+    // const serverUrl = 'ws://0.tcp.in.ngrok.io:11347/iot';
+
+    function connectWebSocket() {
+      ws = new WebSocket(serverUrl);
+
+      ws.onopen = () => {
+        document.getElementById('connectionStatus').textContent = 'Connected';
+        document.getElementById('connectionStatus').classList.replace('disconnected', 'connected');
+      };
+
+      ws.onclose = () => {
+        document.getElementById('connectionStatus').textContent = 'Disconnected';
+        document.getElementById('connectionStatus').classList.replace('connected', 'disconnected');
+        setTimeout(connectWebSocket, 2000); // Reconnect after 2 seconds
+      };
+
+      ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+      };
+
+      ws.onmessage = (event) => {
+        const response = JSON.parse(event.data);
+        console.log('Received:', response);
+      };
+    }
+
+    function sendCommand(command) {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(command));
+      } else {
+        console.error('WebSocket is not connected');
+      }
+    }
+
+    // Chat Input: Text & Voice Handling
+    const chatText = document.getElementById('chatText');
+    const sendText = document.getElementById('sendText');
+    const startVoice = document.getElementById('startVoice');
+
+    sendText.onclick = () => {
+      const text = chatText.value.trim();
+      if (text) {
+        console.log('Text command:', text);
+        sendCommand({
+          device: "general",
+          action: "processCommand",
+          parameters: { input: text }
+        });
+        chatText.value = "";
+      }
+    };
+
+    let recognition;
+    if ('webkitSpeechRecognition' in window) {
+      recognition = new webkitSpeechRecognition();
+    } else if ('SpeechRecognition' in window) {
+      recognition = new SpeechRecognition();
+    }
+
+    if (recognition) {
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        console.log('Voice command:', transcript);
+        sendCommand({
+          device: "general",
+          action: "processCommand",
+          parameters: { input: transcript }
+        });
+        chatText.value = transcript;
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Speech recognition error', event.error);
+      };
+    } else {
+      console.warn('Speech recognition not supported in this browser.');
+    }
+
+    startVoice.onclick = () => {
+      if (recognition) {
+        recognition.start();
+      }
+    };
+
+    // Light Controls Setup (for each light card)
+    function setupLightControl(index) {
+      const toggle = document.getElementById('light' + index + 'Toggle');
+      const intensity = document.getElementById('light' + index + 'Intensity');
+      const color = document.getElementById('light' + index + 'Color');
+
+      toggle.onclick = function () {
+        const isOn = this.textContent === 'ON';
+        this.textContent = isOn ? 'OFF' : 'ON';
+        this.classList.toggle('off');
+        sendCommand({
+          device: 'light',
+          action: 'toggle',
+          deviceIndex: index,
+          parameters: { state: !isOn }
+        });
+      };
+
+      intensity.onchange = function () {
+        sendCommand({
+          device: 'light',
+          action: 'setintensity',
+          deviceIndex: index,
+          parameters: { intensity: parseFloat(this.value) }
+        });
+      };
+
+      color.onchange = function () {
+        sendCommand({
+          device: 'light',
+          action: 'setcolor',
+          deviceIndex: index,
+          parameters: { color: this.value.substring(1) }
+        });
+      };
+    }
+
+    // Assuming 3 lights (indices 0, 1, 2)
+    setupLightControl(0);
+    setupLightControl(1);
+    setupLightControl(2);
+
+    // TV Controls
+    document.getElementById('tvToggle').onclick = function () {
+      const isOn = this.textContent === 'ON';
+      this.textContent = isOn ? 'OFF' : 'ON';
+      this.classList.toggle('off');
+      sendCommand({
+        device: 'tv',
+        action: 'toggle',
+        parameters: { state: !isOn }
+      });
+    };
+
+    document.getElementById('tvVolume').onchange = function () {
+      sendCommand({
+        device: 'tv',
+        action: 'setvolume',
+        parameters: { volume: parseInt(this.value) }
+      });
+    };
+
+    document.getElementById('tvChannel').onchange = function () {
+      sendCommand({
+        device: 'tv',
+        action: 'setchannel',
+        parameters: { channel: parseInt(this.value) }
+      });
+    };
+
+    document.getElementById('tvSource').onchange = function () {
+      sendCommand({
+        device: 'tv',
+        action: 'setsource',
+        parameters: { source: this.value }
+      });
+    };
+
+    // AC Controls
+    document.getElementById('acToggle').onclick = function () {
+      const isOn = this.textContent === 'ON';
+      this.textContent = isOn ? 'OFF' : 'ON';
+      this.classList.toggle('off');
+      sendCommand({
+        device: 'ac',
+        action: 'toggle',
+        parameters: { state: !isOn }
+      });
+    };
+
+    document.getElementById('acTemperature').onchange = function () {
+      sendCommand({
+        device: 'ac',
+        action: 'settemperature',
+        parameters: { temperature: parseInt(this.value) }
+      });
+    };
+
+    document.getElementById('acFanSpeed').onchange = function () {
+      sendCommand({
+        device: 'ac',
+        action: 'setfanspeed',
+        parameters: { speed: parseInt(this.value) }
+      });
+    };
+
+    document.getElementById('acEcoMode').onclick = function () {
+      const isOn = this.textContent === 'ON';
+      this.textContent = isOn ? 'OFF' : 'ON';
+      this.classList.toggle('off');
+      sendCommand({
+        device: 'ac',
+        action: 'toggleeco',
+        parameters: { eco: !isOn }
+      });
+    };
+
+    // Fan Controls
+    document.getElementById('fanToggle').onclick = function () {
+      const isOn = this.textContent === 'ON';
+      this.textContent = isOn ? 'OFF' : 'ON';
+      this.classList.toggle('off');
+      sendCommand({
+        device: 'fan',
+        action: 'toggle',
+        parameters: { state: !isOn }
+      });
+    };
+
+    document.getElementById('fanRPM').onchange = function () {
+      sendCommand({
+        device: 'fan',
+        action: 'setrpm',
+        parameters: { rpm: parseInt(this.value) }
+      });
+    };
+
+    // Fridge Controls
+    document.getElementById('fridgeToggle').onclick = function () {
+      const isOn = this.textContent === 'ON';
+      this.textContent = isOn ? 'OFF' : 'ON';
+      this.classList.toggle('off');
+      sendCommand({
+        device: 'fridge',
+        action: 'toggle',
+        parameters: { state: !isOn }
+      });
+    };
+
+    document.getElementById('fridgeTemperature').onchange = function () {
+      sendCommand({
+        device: 'fridge',
+        action: 'settemperature',
+        parameters: { temperature: parseInt(this.value) }
+      });
+    };
+
+    document.getElementById('freezeTemperature').onchange = function () {
+      sendCommand({
+        device: 'fridge',
+        action: 'setfreezetemperature',
+        parameters: { temperature: parseInt(this.value) }
+      });
+    };
+
+    document.getElementById('fridgeDoorToggle').onclick = function () {
+      const isOpen = this.textContent === 'Open';
+      this.textContent = isOpen ? 'Closed' : 'Open';
+      this.classList.toggle('off');
+      sendCommand({
+        device: 'fridge',
+        action: 'setdoorstatus',
+        parameters: { fridgeDoor: !isOpen, freezeDoor: undefined }
+      });
+    };
+
+    document.getElementById('freezeDoorToggle').onclick = function () {
+      const isOpen = this.textContent === 'Open';
+      this.textContent = isOpen ? 'Closed' : 'Open';
+      this.classList.toggle('off');
+      sendCommand({
+        device: 'fridge',
+        action: 'setdoorstatus',
+        parameters: { fridgeDoor: undefined, freezeDoor: !isOpen }
+      });
+    };
+
+    // Induction Controls
+    document.getElementById('inductionHeat').onchange = function () {
+      sendCommand({
+        device: 'induction',
+        action: 'setheat',
+        parameters: { level: parseInt(this.value) }
+      });
+    };
+
+    // Washing Machine Controls
+    document.getElementById('washingMachineToggle').onclick = function () {
+      const isOn = this.textContent === 'ON';
+      this.textContent = isOn ? 'OFF' : 'ON';
+      this.classList.toggle('off');
+      sendCommand({
+        device: 'washingmachine',
+        action: 'toggle',
+        parameters: { state: !isOn }
+      });
+    };
+
+    // Initialize WebSocket connection
+    connectWebSocket();
+  </script>
+</body>
+</html>
