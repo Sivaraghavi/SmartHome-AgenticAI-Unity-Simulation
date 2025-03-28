@@ -56,4 +56,4 @@ For specific setup and usage instructions:
 
 ## Contact
 
-For any questions or feedback, please reach out to us at [sivaraghavi6103@gmail.com](mailto:sivaraghavi6103@gmail.com).
+For any questions or feedback, contact me at [sivaraghavi6103@gmail.com](mailto:sivaraghavi6103@gmail.com).
